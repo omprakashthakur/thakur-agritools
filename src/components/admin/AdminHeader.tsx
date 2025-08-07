@@ -43,10 +43,6 @@ export default function AdminHeader() {
         <Button variant="ghost" size="icon">
           <Bell className="h-5 w-5" />
         </Button>
-        {/* TODO: Add dark mode toggle */}
-        <Button variant="ghost" size="icon">
-           <Sun className="h-5 w-5" />
-        </Button>
         <Avatar className="h-9 w-9">
           <AvatarImage src="https://placehold.co/40x40.png" alt="Albert F." data-ai-hint="man portrait"/>
           <AvatarFallback>AF</AvatarFallback>

@@ -3,10 +3,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BarChart, Settings, ShoppingCart, Users, Package, ChevronDown } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Home, BarChart, Settings, ShoppingCart, Users, Package, Tractor } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '../ui/button';
 
 const menuItems = [
     {
@@ -49,13 +47,11 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="hidden md:flex h-full flex-col border-r bg-background">
+    <aside className="hidden md:flex h-full flex-col border-r bg-card">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/admin" className="flex items-center gap-2 font-semibold">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6 fill-primary">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/>
-          </svg>
-          <span className="">DashCode</span>
+        <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Tractor className="h-6 w-6 text-primary" />
+          <span className="">Thakur AgriTools</span>
         </Link>
       </div>
       <nav className="flex-1 overflow-auto py-4">
@@ -63,7 +59,7 @@ export default function AdminSidebar() {
             {menuItems.map(item => (
                 <Link key={item.href} href={item.href} className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                    isActive(item.href) && "bg-accent text-primary"
+                    isActive(item.href) && "bg-accent text-primary-foreground"
                 )}>
                     <item.icon className="h-4 w-4" />
                     {item.label}
