@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -53,8 +52,9 @@ export default function AdminCustomersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead className="hidden md:table-cell">Phone</TableHead>
+                <TableHead className="hidden md:table-cell">Registered</TableHead>
                 <TableHead className="hidden md:table-cell">Total Orders</TableHead>
-                <TableHead className="hidden md:table-cell">Total Spent</TableHead>
+                <TableHead className="text-right hidden md:table-cell">Total Spent</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -76,6 +76,7 @@ export default function AdminCustomersPage() {
                       <TableCell className="font-medium">{customer.name}</TableCell>
                       <TableCell>{customer.email}</TableCell>
                       <TableCell className="hidden md:table-cell">{customer.phone}</TableCell>
+                      <TableCell className="hidden md:table-cell">{customer.registered}</TableCell>
                       <TableCell className="hidden md:table-cell text-center">{customer.totalOrders}</TableCell>
                       <TableCell className="hidden md:table-cell text-right">${customer.totalSpent.toFixed(2)}</TableCell>
                       <TableCell>
@@ -89,7 +90,7 @@ export default function AdminCustomersPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem>View Details</DropdownMenuItem>
+                                <DropdownMenuItem asChild><Link href={`/admin/customers/${customer.id}`}>View Details</Link></DropdownMenuItem>
                                 <DropdownMenuItem>Edit</DropdownMenuItem>
                                 <AlertDialogTrigger asChild>
                                     <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
