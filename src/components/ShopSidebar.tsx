@@ -6,14 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-
-const categories = [
-  { id: 'power-tools', label: 'Power Tools' },
-  { id: 'hand-tools', label: 'Hand Tools' },
-  { id: 'gardening', label: 'Gardening' },
-  { id: 'farming-equipment', label: 'Farming Equipment' },
-  { id: 'safety-gear', label: 'Safety Gear' },
-];
+import { categories } from "@/lib/data";
 
 interface ShopSidebarProps {
   filters: {
