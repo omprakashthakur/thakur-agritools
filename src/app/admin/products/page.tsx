@@ -91,7 +91,12 @@ export default function AdminProductsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
+                               <DropdownMenuItem asChild>
+                                <Link href={`/product/${product.slug}`} target="_blank">View</Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem asChild>
+                                <Link href={`/admin/products/edit/${product.id}`}>Edit</Link>
+                              </DropdownMenuItem>
                               <AlertDialogTrigger asChild>
                                   <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
                               </AlertDialogTrigger>
