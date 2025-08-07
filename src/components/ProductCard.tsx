@@ -1,9 +1,10 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, ShoppingCart } from 'lucide-react';
+import { Eye, ShoppingCart, Star } from 'lucide-react';
 
 interface ProductCardProps {
   product: {
@@ -14,6 +15,7 @@ interface ProductCardProps {
     image: string;
     slug: string;
     tag?: string;
+    rating?: number;
   };
 }
 
@@ -47,11 +49,19 @@ export default function ProductCard({ product }: ProductCardProps) {
                 {product.name}
             </Link>
         </CardTitle>
-        <div className="flex items-baseline space-x-2 mt-2">
-          <p className="text-xl font-bold text-foreground">${product.price.toFixed(2)}</p>
-          {product.originalPrice && (
-            <p className="text-sm text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
-          )}
+        <div className="flex items-center justify-between mt-2">
+            <div className="flex items-baseline space-x-2">
+            <p className="text-xl font-bold text-foreground">${product.price.toFixed(2)}</p>
+            {product.originalPrice && (
+                <p className="text-sm text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</p>
+            )}
+            </div>
+            {product.rating && (
+                <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-accent fill-accent" />
+                    <span className="text-sm text-muted-foreground">{product.rating.toFixed(1)}</span>
+                </div>
+            )}
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
