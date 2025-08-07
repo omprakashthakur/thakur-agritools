@@ -89,6 +89,12 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const product = allProducts.find((p) => p.slug === params.slug);
   const [activeImage, setActiveImage] = useState(product?.image || 'https://placehold.co/600x600.png');
 
+  useEffect(() => {
+    if (product) {
+      setActiveImage(product.image);
+    }
+  }, [product]);
+
   if (!product) {
     notFound();
   }
