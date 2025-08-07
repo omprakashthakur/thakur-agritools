@@ -1,4 +1,3 @@
-
 'use client';
 
 import Image from 'next/image';
@@ -23,7 +22,7 @@ export default function AdminProductsPage() {
             <Button size="sm" variant="outline">Export</Button>
             <Button size="sm" asChild>
                 <Link href="/admin/products/new">
-                    <PlusCircle className="h-4 w-4 mr-2" />
+                    <PlusCircle className="mr-2 h-4 w-4" />
                     Add Product
                 </Link>
             </Button>
@@ -56,6 +55,7 @@ export default function AdminProductsPage() {
                         height="64"
                         src={product.image}
                         width="64"
+                        data-ai-hint="tool"
                         />
                     </TableCell>
                     <TableCell className="font-medium">{product.name}</TableCell>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -79,6 +78,7 @@ export default function AdminAddProductPage() {
                                     height="300"
                                     src="https://placehold.co/300x300.png"
                                     width="300"
+                                    data-ai-hint="tool"
                                 />
                                 <div className="grid grid-cols-3 gap-2">
                                      <button>
@@ -86,8 +86,9 @@ export default function AdminAddProductPage() {
                                             alt="Product image"
                                             className="aspect-square w-full rounded-md object-cover"
                                             height="84"
-                                            src="https://placehold.co/300x300.png"
+                                            src="https://placehold.co/84x84.png"
                                             width="84"
+                                            data-ai-hint="tool"
                                         />
                                      </button>
                                     <button>
@@ -95,8 +96,9 @@ export default function AdminAddProductPage() {
                                             alt="Product image"
                                             className="aspect-square w-full rounded-md object-cover"
                                             height="84"
-                                            src="https://placehold.co/300x300.png"
+                                            src="https://placehold.co/84x84.png"
                                             width="84"
+                                            data-ai-hint="tool"
                                         />
                                     </button>
                                     <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
