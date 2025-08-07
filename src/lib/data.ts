@@ -284,3 +284,56 @@ export const categories = [
     { id: 'farming-equipment', label: 'Farming Equipment' },
     { id: 'safety-gear', label: 'Safety Gear' },
 ];
+
+export const customers = [
+    {
+        id: 'CUST001',
+        name: 'Liam Johnson',
+        email: 'liam@example.com',
+        phone: '555-0100',
+        registered: '2023-01-15',
+        totalOrders: 5,
+        totalSpent: 1250.75,
+        avatar: 'https://placehold.co/40x40.png'
+    },
+    {
+        id: 'CUST002',
+        name: 'Olivia Smith',
+        email: 'olivia@example.com',
+        phone: '555-0101',
+        registered: '2023-02-20',
+        totalOrders: 2,
+        totalSpent: 350.50,
+        avatar: 'https://placehold.co/40x40.png'
+    },
+    {
+        id: 'CUST003',
+        name: 'Noah Williams',
+        email: 'noah@example.com',
+        phone: '555-0102',
+        registered: '2023-03-10',
+        totalOrders: 8,
+        totalSpent: 2400.00,
+        avatar: 'https://placehold.co/40x40.png'
+    },
+    {
+        id: 'CUST004',
+        name: 'Emma Brown',
+        email: 'emma@example.com',
+        phone: '555-0103',
+        registered: '2023-04-05',
+        totalOrders: 1,
+        totalSpent: 75.20,
+        avatar: 'https://placehold.co/40x40.png'
+    },
+    {
+        id: 'CUST005',
+        name: 'Oliver Jones',
+        email: 'oliver@example.com',
+        phone: '555-0104',
+        registered: '2023-05-21',
+        totalOrders: 3,
+        totalSpent: 620.00,
+        avatar: 'https://placehold.co/40x40.png'
+    }
+];
