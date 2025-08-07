@@ -13,9 +13,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 
 const navLinks = [
-  { href: '/account', label: 'My Profile', icon: User },
-  { href: '/account/orders', label: 'Order History', icon: Package },
-  { href: '/account/addresses', label: 'My Addresses', icon: MapPin },
+  { href: '/myaccount', label: 'My Profile', icon: User },
+  { href: '/myaccount/orders', label: 'Order History', icon: Package },
+  { href: '/myaccount/addresses', label: 'My Addresses', icon: MapPin },
 ];
 
 const getInitials = (name: string | null | undefined) => {
@@ -23,7 +23,7 @@ const getInitials = (name: string | null | undefined) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
 }
 
-export default function AccountNav() {
+export default function MyAccountNav() {
   const pathname = usePathname();
   const router = useRouter();
   const [user] = useAuthState(auth);

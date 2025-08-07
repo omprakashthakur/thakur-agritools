@@ -91,7 +91,7 @@ export default function AdminCustomersPage() {
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuItem asChild><Link href={`/admin/customers/${customer.id}`}>View Details</Link></DropdownMenuItem>
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem asChild><Link href={`/admin/customers/${customer.id}`}>Edit</Link></DropdownMenuItem>
                                 <AlertDialogTrigger asChild>
                                     <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
                                 </AlertDialogTrigger>

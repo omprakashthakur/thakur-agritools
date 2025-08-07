@@ -14,17 +14,39 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { customers, orders } from '@/lib/data';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 
 export default function AdminCustomerDetailsPage() {
     const params = useParams();
     const router = useRouter();
+    const { toast } = useToast();
     const customerId = params.id as string;
     
     const customer = customers.find(c => c.id === customerId);
 
+    const [isEditing, setIsEditing] = useState(false);
+    const [name, setName] = useState(customer?.name || '');
+    const [email, setEmail] = useState(customer?.email || '');
+    const [phone, setPhone] = useState(customer?.phone || '');
+
     if (!customer) {
         notFound();
+    }
+
+    const handleSaveChanges = () => {
+        const customerIndex = customers.findIndex(c => c.id === customerId);
+        if (customerIndex > -1) {
+            customers[customerIndex] = { ...customers[customerIndex], name, email, phone };
+        }
+        toast({
+            title: "Customer Updated",
+            description: "The customer's details have been saved.",
+        });
+        setIsEditing(false);
     }
   
   return (
@@ -49,10 +71,18 @@ export default function AdminCustomerDetailsPage() {
             </div>
             
             <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                <Button variant="outline" size="sm">
-                    Edit Customer
-                </Button>
-                <Button size="sm">Send Message</Button>
+                {isEditing ? (
+                    <>
+                        <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+                            Cancel
+                        </Button>
+                        <Button size="sm" onClick={handleSaveChanges}>Save Changes</Button>
+                    </>
+                ) : (
+                     <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                        Edit Customer
+                    </Button>
+                )}
             </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -80,19 +110,53 @@ export default function AdminCustomerDetailsPage() {
                 <CardHeader>
                 <CardTitle>Contact Information</CardTitle>
                 </CardHeader>
-                <CardContent className="grid gap-4 text-sm">
-                    <div className="grid grid-cols-2">
-                        <div className="font-semibold">Email</div>
-                        <div>{customer.email}</div>
-                    </div>
-                    <div className="grid grid-cols-2">
-                        <div className="font-semibold">Phone</div>
-                        <div>{customer.phone}</div>
-                    </div>
+                <CardContent className="grid gap-6 text-sm">
+                    {isEditing ? (
+                        <>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="name">Name</Label>
+                                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone">Phone</Label>
+                                <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-2">
+                                <div className="font-semibold">Email</div>
+                                <div>{customer.email}</div>
+                            </div>
+                            <div className="grid grid-cols-2">
+                                <div className="font-semibold">Phone</div>
+                                <div>{customer.phone}</div>
+                            </div>
+                        </>
+                    )}
                 </CardContent>
             </Card>
+        </div>
+        <div className="flex items-center justify-center gap-2 md:hidden">
+            {isEditing ? (
+                <>
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+                        Cancel
+                    </Button>
+                    <Button size="sm" onClick={handleSaveChanges}>Save Changes</Button>
+                </>
+            ) : (
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                    Edit Customer
+                </Button>
+            )}
         </div>
     </div>
   )
 }
-
