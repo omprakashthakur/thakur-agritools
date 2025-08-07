@@ -45,7 +45,7 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   const isActive = (href: string) => {
-    return pathname === href;
+    return pathname === href || (href !== '/admin' && pathname.startsWith(href));
   }
 
   return (
