@@ -2,16 +2,86 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { allProducts } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Star, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { Star, Minus, Plus, ShoppingCart, Bot, ThumbsUp, ThumbsDown } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { useToast } from "@/hooks/use-toast";
+import { summarizeProductReviews, type SummarizeProductReviewsOutput } from '@/ai/flows/product-review-summarizer';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const AIReviewSummary = ({ product }) => {
+    const [summary, setSummary] = useState<SummarizeProductReviewsOutput | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (product.reviews && product.reviews.length > 0) {
+            const fetchSummary = async () => {
+                setIsLoading(true);
+                setError(null);
+                try {
+                    const result = await summarizeProductReviews({ reviews: product.reviews });
+                    setSummary(result);
+                } catch (e) {
+                    setError("Sorry, I couldn't generate a summary at this time.");
+                    console.error(e);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchSummary();
+        }
+    }, [product.reviews]);
+
+    if (!product.reviews || product.reviews.length === 0) {
+        return null; // Don't show the section if there are no reviews
+    }
+    
+    return (
+        <AccordionItem value="item-3">
+            <AccordionTrigger className="text-lg font-headline">
+                <div className="flex items-center gap-2">
+                    <Bot /> AI Review Summary
+                </div>
+            </AccordionTrigger>
+            <AccordionContent>
+                {isLoading && (
+                    <div className="space-y-4">
+                        <Skeleton className="h-4 w-1/4" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                    </div>
+                )}
+                {error && <p className="text-destructive">{error}</p>}
+                {summary && !isLoading && (
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <Star className="w-5 h-5 text-accent fill-accent" />
+                            <span className="font-bold">Average Rating:</span>
+                            <span>{summary.averageRating.toFixed(1)} / 5</span>
+                        </div>
+                        <div className="space-y-2">
+                            <h4 className="font-semibold flex items-center gap-2"><ThumbsUp className="w-5 h-5 text-green-500" /> Common Positive Feedback</h4>
+                            <p className="text-muted-foreground">{summary.positiveFeedback}</p>
+                        </div>
+                         <div className="space-y-2">
+                            <h4 className="font-semibold flex items-center gap-2"><ThumbsDown className="w-5 h-5 text-red-500" /> Common Negative Feedback</h4>
+                            <p className="text-muted-foreground">{summary.negativeFeedback}</p>
+                        </div>
+                    </div>
+                )}
+            </AccordionContent>
+        </AccordionItem>
+    );
+};
+
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [quantity, setQuantity] = useState(1);
@@ -49,7 +119,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 />
             </div>
             <div className="grid grid-cols-5 gap-2">
-                {product.images.map((img, idx) => (
+                {(product.images || [product.image]).map((img, idx) => (
                     <button 
                         key={idx}
                         onClick={() => setActiveImage(img)}
@@ -121,6 +191,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <p>Free standard shipping on orders over $50. Express shipping available. We accept returns within 30 days of purchase. Please see our full policy for details.</p>
               </AccordionContent>
             </AccordionItem>
+            <AIReviewSummary product={product} />
           </Accordion>
         </div>
       </div>

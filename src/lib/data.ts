@@ -1,4 +1,5 @@
 
+
 export const allProducts = [
     { 
         id: '1', 
@@ -21,7 +22,14 @@ export const allProducts = [
             'Battery': '2.0Ah Lithium-Ion',
             'Chuck Size': '1/2 Inch',
             'No-load speed': '0-2,000 RPM'
-        }
+        },
+        reviews: [
+            { rating: 5, comment: "This drill is an absolute beast! Powers through everything I throw at it." },
+            { rating: 5, comment: "Long battery life and very comfortable to hold. Highly recommend." },
+            { rating: 4, comment: "Great drill, very powerful. A bit on the heavy side, but that's expected for its class." },
+            { rating: 3, comment: "The chuck sometimes loosens up on its own, which is annoying." },
+            { rating: 5, comment: "Excellent value for the price. Performs just as well as more expensive brands." }
+        ]
     },
     { 
         id: '2', 
@@ -38,7 +46,8 @@ export const allProducts = [
             'Handle': 'Fiberglass with D-Grip',
             'Length': '40 Inches',
             'Weight': '4 lbs'
-        }
+        },
+        reviews: []
     },
     { 
         id: '3', 
@@ -55,7 +64,8 @@ export const allProducts = [
             'Tilling Width': '16 Inches',
             'Tilling Depth': '8 Inches',
             'Power Source': 'Corded Electric'
-        }
+        },
+        reviews: []
     },
     { 
         id: '4', 
@@ -72,7 +82,8 @@ export const allProducts = [
             'UV Protection': '99.9%',
             'Standard': 'ANSI Z87.1',
             'Features': 'Anti-fog, Anti-scratch'
-        }
+        },
+        reviews: []
     },
     { 
         id: '5', 
@@ -89,7 +100,8 @@ export const allProducts = [
             'Output Current': '40-200A',
             'Duty Cycle': '60% @ 200A',
             'Weight': '50 lbs'
-        }
+        },
+        reviews: []
     },
     { 
         id: '6', 
@@ -106,7 +118,8 @@ export const allProducts = [
             'Grain Tank Capacity': '12,500 L',
             'Cutting Width': '9 meters',
             'Transmission': 'Hydrostatic'
-        }
+        },
+        reviews: []
     },
     { 
         id: '7', 
@@ -123,7 +136,8 @@ export const allProducts = [
             'Handle': 'Aluminum, non-slip grip',
             'Cutting Capacity': '3/4 inch',
             'Lock': 'Safety lock'
-        }
+        },
+        reviews: []
     },
     { 
         id: '8', 
@@ -140,7 +154,8 @@ export const allProducts = [
             'Reinforcement': 'Palm and fingertips',
             'Cuff': 'Safety cuff',
             'Size': 'Large'
-        }
+        },
+        reviews: []
     },
     { 
         id: '9', 
@@ -157,7 +172,8 @@ export const allProducts = [
             'Planting Depth': 'Adjustable, up to 3 inches',
             'Row Spacing': 'Adjustable',
             'Frame': 'Steel'
-        }
+        },
+        reviews: []
     },
     { 
         id: '10', 
@@ -174,7 +190,8 @@ export const allProducts = [
             'Diameter': '5/8 inch',
             'Material': 'Hybrid Polymer',
             'Nozzle Patterns': '8'
-        }
+        },
+        reviews: []
     },
     { 
         id: '11', 
@@ -191,7 +208,8 @@ export const allProducts = [
             'Air Speed': '120 MPH',
             'Battery': '40V Lithium-Ion',
             'Weight': '7 lbs'
-        }
+        },
+        reviews: []
     },
     { 
         id: '12', 
@@ -208,7 +226,8 @@ export const allProducts = [
             'Tray Material': 'Steel',
             'Tire': '16-inch Pneumatic',
             'Frame': 'Steel'
-        }
+        },
+        reviews: []
     },
 ];
 
