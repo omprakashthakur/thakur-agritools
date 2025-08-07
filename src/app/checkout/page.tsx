@@ -37,7 +37,7 @@ const OrderSummary = () => {
     const total = subtotal + shipping + taxes;
     
     return (
-        <div className="bg-muted/50 p-8 rounded-lg">
+        <div className="bg-muted/50 p-8 rounded-lg sticky top-24">
             <h2 className="text-2xl font-headline font-bold mb-6">Order Summary</h2>
             <div className="space-y-4">
                 {initialCartItems.map(item => (
@@ -81,9 +81,9 @@ const OrderSummary = () => {
 
 export default function CheckoutPage() {
     
-    const PaymentMethodIcon = ({ name, src }) => (
-        <div className="flex items-center justify-center p-3 border rounded-md bg-background h-16 w-full">
-            <Image src={src} alt={name} width={80} height={30} className="object-contain" />
+    const PaymentMethodIcon = ({ name, src, hint }) => (
+        <div className="flex items-center justify-center p-3 border rounded-md bg-background h-16 w-full has-[:checked]:border-primary has-[:checked]:ring-2 has-[:checked]:ring-primary">
+            <Image src={src} alt={name} width={80} height={30} className="object-contain" data-ai-hint={hint} />
         </div>
     );
     
@@ -103,52 +103,52 @@ export default function CheckoutPage() {
             <div className="space-y-4">
                 <h2 className="text-2xl font-headline font-bold">Shipping Information</h2>
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2"><Label htmlFor="first-name">First Name</Label><Input id="first-name" /></div>
-                    <div className="space-y-2"><Label htmlFor="last-name">Last Name</Label><Input id="last-name" /></div>
+                    <div className="space-y-2"><Label htmlFor="first-name">First Name</Label><Input id="first-name" placeholder="John" /></div>
+                    <div className="space-y-2"><Label htmlFor="last-name">Last Name</Label><Input id="last-name" placeholder="Doe" /></div>
                 </div>
-                <div className="space-y-2"><Label htmlFor="address">Address</Label><Input id="address" /></div>
+                <div className="space-y-2"><Label htmlFor="address">Address</Label><Input id="address" placeholder="123 Main St" /></div>
                 <div className="space-y-2"><Label htmlFor="apartment">Apartment, suite, etc. (optional)</Label><Input id="apartment" /></div>
-                <div className="grid grid-cols-3 gap-4">
-                    <div className="space-y-2"><Label htmlFor="city">City</Label><Input id="city" /></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2 md:col-span-1"><Label htmlFor="city">City</Label><Input id="city" placeholder="Dhangadhi" /></div>
                     <div className="space-y-2"><Label htmlFor="country">Country</Label>
-                        <Select>
-                            <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
+                        <Select defaultValue="nepal">
+                            <SelectTrigger><SelectValue /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="nepal">Nepal</SelectItem>
                                 <SelectItem value="india">India</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="space-y-2"><Label htmlFor="postal-code">Postal Code</Label><Input id="postal-code" /></div>
+                    <div className="space-y-2"><Label htmlFor="postal-code">Postal Code</Label><Input id="postal-code" placeholder="10001" /></div>
                 </div>
-                <div className="space-y-2"><Label htmlFor="phone">Phone</Label><Input type="tel" id="phone" /></div>
+                <div className="space-y-2"><Label htmlFor="phone">Phone</Label><Input type="tel" id="phone" placeholder="+977..." /></div>
             </div>
 
             {/* Payment Method */}
             <div className="space-y-4">
                  <h2 className="text-2xl font-headline font-bold">Payment Method</h2>
                  <p className="text-muted-foreground">Select your preferred payment method.</p>
-                 <RadioGroup defaultValue="esewa">
+                 <RadioGroup defaultValue="esewa" className="mt-4">
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         <Label htmlFor="esewa" className="cursor-pointer">
                             <RadioGroupItem value="esewa" id="esewa" className="sr-only" />
-                            <PaymentMethodIcon name="eSewa" src="https://placehold.co/150x50.png" />
+                            <PaymentMethodIcon name="eSewa" src="https://placehold.co/150x50.png" hint="esewa logo" />
                         </Label>
                          <Label htmlFor="khalti" className="cursor-pointer">
                             <RadioGroupItem value="khalti" id="khalti" className="sr-only" />
-                            <PaymentMethodIcon name="Khalti" src="https://placehold.co/150x50.png" />
+                            <PaymentMethodIcon name="Khalti" src="https://placehold.co/150x50.png" hint="khalti logo" />
                         </Label>
                          <Label htmlFor="fonepay" className="cursor-pointer">
                             <RadioGroupItem value="fonepay" id="fonepay" className="sr-only" />
-                            <PaymentMethodIcon name="Fonepay" src="https://placehold.co/150x50.png" />
+                            <PaymentMethodIcon name="Fonepay" src="https://placehold.co/150x50.png" hint="fonepay logo" />
                         </Label>
                         <Label htmlFor="upi" className="cursor-pointer">
                             <RadioGroupItem value="upi" id="upi" className="sr-only" />
-                            <PaymentMethodIcon name="UPI" src="https://placehold.co/150x50.png" />
+                            <PaymentMethodIcon name="UPI" src="https://placehold.co/150x50.png" hint="upi logo" />
                         </Label>
                         <Label htmlFor="paypal" className="cursor-pointer">
                             <RadioGroupItem value="paypal" id="paypal" className="sr-only" />
-                            <PaymentMethodIcon name="PayPal" src="https://placehold.co/150x50.png" />
+                            <PaymentMethodIcon name="PayPal" src="https://placehold.co/150x50.png" hint="paypal logo" />
                         </Label>
                     </div>
                  </RadioGroup>
