@@ -1,13 +1,29 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from '@/components/ui/separator';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { auth } from '@/lib/firebase';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  updateProfile
+} from 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Loader2, LogOut } from 'lucide-react';
+
 
 const GoogleIcon = (props) => (
   <svg viewBox="0 0 48 48" {...props}>
@@ -23,8 +39,120 @@ const GoogleIcon = (props) => (
   </svg>
 );
 
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
+});
+
+const registerSchema = z.object({
+  firstName: z.string().min(1, 'First name is required.'),
+  lastName: z.string().min(1, 'Last name is required.'),
+  email: z.string().email(),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
+});
+
 
 export default function AccountPage() {
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
+  const { toast } = useToast();
+  const [formLoading, setFormLoading] = useState< 'login' | 'register' | 'google' | null>(null);
+
+  const loginForm = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  const registerForm = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { firstName: '', lastName: '', email: '', password: '' },
+  });
+
+
+  useEffect(() => {
+    if (!loading && user) {
+      // Redirect away if logged in
+    }
+  }, [user, loading, router]);
+
+
+  const handleLogin = async (values: z.infer<typeof loginSchema>) => {
+    setFormLoading('login');
+    try {
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      toast({ title: "Login Successful", description: "Welcome back!" });
+      router.push('/');
+    } catch (e: any) {
+      toast({ variant: 'destructive', title: "Login Failed", description: e.message });
+    } finally {
+      setFormLoading(null);
+    }
+  };
+
+  const handleRegister = async (values: z.infer<typeof registerSchema>) => {
+    setFormLoading('register');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      await updateProfile(userCredential.user, {
+        displayName: `${values.firstName} ${values.lastName}`
+      });
+      toast({ title: "Registration Successful", description: "Welcome to Thakur AgriTools Hub!" });
+      router.push('/');
+    } catch (e: any) {
+      toast({ variant: 'destructive', title: "Registration Failed", description: e.message });
+    } finally {
+      setFormLoading(null);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setFormLoading('google');
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      toast({ title: "Login Successful", description: "Welcome!" });
+      router.push('/');
+    } catch (e: any) {
+      toast({ variant: 'destructive', title: "Google Sign-In Failed", description: e.message });
+    } finally {
+      setFormLoading(null);
+    }
+  };
+  
+  const handleLogout = async () => {
+    await auth.signOut();
+    toast({ title: "Logged out", description: "You have been successfully logged out." });
+  }
+
+  if (loading) {
+      return (
+          <div className="container mx-auto px-4 py-24 flex justify-center items-center">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+          </div>
+      )
+  }
+
+  if (user) {
+    return (
+        <div className="container mx-auto px-4 py-12 sm:py-24 max-w-lg">
+            <Card>
+                <CardHeader className="text-center">
+                    <CardTitle className="text-2xl font-headline">My Account</CardTitle>
+                    <CardDescription>Welcome back, {user.displayName || user.email}!</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-center text-muted-foreground">You are logged in.</p>
+                </CardContent>
+                <CardFooter>
+                    <Button className="w-full" variant="destructive" onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                    </Button>
+                </CardFooter>
+            </Card>
+        </div>
+    )
+  }
 
   return (
     <>
@@ -40,36 +168,58 @@ export default function AccountPage() {
                 <CardTitle className="text-2xl font-headline">Welcome Back!</CardTitle>
                 <CardDescription>Enter your email below to login to your account.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <Button variant="outline" className="w-full">
-                  <GoogleIcon className="mr-2 h-5 w-5"/>
-                  Login with Google
-                </Button>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input id="login-email" type="email" placeholder="m@example.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input id="login-password" type="password" />
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col gap-4">
-                <Button className="w-full">Login</Button>
-                <p className="text-xs text-muted-foreground text-center">
-                    Forgot your password?
-                </p>
-              </CardFooter>
+              <Form {...loginForm}>
+                <form onSubmit={loginForm.handleSubmit(handleLogin)}>
+                  <CardContent className="space-y-4">
+                    <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={!!formLoading}>
+                      {formLoading === 'google' ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5"/>}
+                      Login with Google
+                    </Button>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">
+                          Or continue with
+                        </span>
+                      </div>
+                    </div>
+                     <FormField
+                        control={loginForm.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="m@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                     <FormField
+                        control={loginForm.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                  </CardContent>
+                  <CardFooter className="flex flex-col gap-4">
+                    <Button className="w-full" type="submit" disabled={!!formLoading}>
+                      {formLoading === 'login' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      Login
+                    </Button>
+                  </CardFooter>
+                </form>
+              </Form>
             </Card>
           </TabsContent>
           <TabsContent value="register">
@@ -78,48 +228,91 @@ export default function AccountPage() {
                 <CardTitle className="text-2xl font-headline">Create an account</CardTitle>
                 <CardDescription>Enter your information to create an account.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                 <Button variant="outline" className="w-full">
-                  <GoogleIcon className="mr-2 h-5 w-5"/>
-                  Sign up with Google
-                </Button>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="first-name">First name</Label>
-                        <Input id="first-name" placeholder="Max" />
+               <Form {...registerForm}>
+                <form onSubmit={registerForm.handleSubmit(handleRegister)}>
+                  <CardContent className="space-y-4">
+                     <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={!!formLoading}>
+                        {formLoading === 'google' ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <GoogleIcon className="mr-2 h-5 w-5"/>}
+                        Sign up with Google
+                    </Button>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-background px-2 text-muted-foreground">
+                          Or continue with
+                        </span>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="last-name">Last name</Label>
-                        <Input id="last-name" placeholder="Robinson" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                            control={registerForm.control}
+                            name="firstName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>First Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Max" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={registerForm.control}
+                            name="lastName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Last Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Robinson" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
-                  <Input id="register-email" type="email" placeholder="m@example.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
-                  <Input id="register-password" type="password" />
-                </div>
-              </CardContent>
-              <CardFooter className="flex flex-col gap-4">
-                <Button className="w-full">Create account</Button>
-                 <p className="text-xs text-muted-foreground text-center">
-                    By creating an account, you agree to our{' '}
-                    <a href="/terms" className="underline hover:text-primary">Terms of Service</a> and{' '}
-                    <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a>.
-                </p>
-              </CardFooter>
+                    <FormField
+                        control={registerForm.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="m@example.com" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={registerForm.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                  </CardContent>
+                  <CardFooter className="flex flex-col gap-4">
+                    <Button className="w-full" type="submit" disabled={!!formLoading}>
+                        {formLoading === 'register' && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Create account
+                    </Button>
+                     <p className="text-xs text-muted-foreground text-center">
+                        By creating an account, you agree to our{' '}
+                        <a href="/terms" className="underline hover:text-primary">Terms of Service</a> and{' '}
+                        <a href="/privacy" className="underline hover:text-primary">Privacy Policy</a>.
+                    </p>
+                  </CardFooter>
+                </form>
+              </Form>
             </Card>
           </TabsContent>
         </Tabs>

@@ -4,11 +4,16 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Search, ShoppingCart, User, Menu, ChevronDown, Tractor } from 'lucide-react';
-import { useState } from 'react';
+import { Search, ShoppingCart, User, Menu, ChevronDown, Tractor, LogOut, LayoutDashboard } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { auth } from '@/lib/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { signOut } from 'firebase/auth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 const categories = [
   'Power Tools',
@@ -21,6 +26,7 @@ const categories = [
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const [user, loading, error] = useAuthState(auth);
 
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -28,6 +34,16 @@ export default function Header() {
       router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    router.push('/');
+  }
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  }
 
   return (
     <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b">
@@ -77,12 +93,38 @@ export default function Header() {
                 <span className="sr-only">Cart</span>
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" asChild>
-               <Link href="/account">
-                <User className="w-6 h-6" />
-                <span className="sr-only">Account</span>
-              </Link>
-            </Button>
+
+            {loading ? (
+                 <div className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+            ) : user ? (
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                         <Avatar className="h-9 w-9">
+                            <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
+                            <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                            <Link href="/account"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout} className="text-red-500">
+                           <LogOut className="mr-2 h-4 w-4" /> Logout
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                 </DropdownMenu>
+            ) : (
+                <Button variant="ghost" size="icon" asChild>
+                   <Link href="/account">
+                    <User className="w-6 h-6" />
+                    <span className="sr-only">Account</span>
+                  </Link>
+                </Button>
+            )}
+
             <div className="md:hidden">
               <Sheet>
                 <SheetTrigger asChild>
