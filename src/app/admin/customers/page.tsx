@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { customers as initialCustomers } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState(initialCustomers);
@@ -35,10 +36,10 @@ export default function AdminCustomersPage() {
           <div className="flex items-center gap-2">
               <Button size="sm" variant="outline">Export</Button>
               <Button size="sm" asChild>
-                  <div className="cursor-pointer">
+                  <Link href="/admin/customers/new">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Add Customer
-                  </div>
+                  </Link>
               </Button>
           </div>
         </CardHeader>
