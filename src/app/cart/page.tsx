@@ -1,13 +1,17 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Trash2, ArrowLeft } from 'lucide-react';
+import { Minus, Plus, Trash2, ArrowLeft, ShoppingCart } from 'lucide-react';
+import { getProductRecommendations, type ProductRecommendationOutput } from '@/ai/flows/product-recommendation';
+import { allProducts } from '@/lib/data';
+import ProductCard from '@/components/ProductCard';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Dummy data for cart items
 const initialCartItems = [
@@ -87,6 +91,55 @@ const CartSummary = ({ subtotal }) => {
     );
 };
 
+const RecommendedProducts = ({ cartItems }) => {
+    const [recommendations, setRecommendations] = useState<ProductRecommendationOutput | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            const fetchRecommendations = async () => {
+                setIsLoading(true);
+                setError(null);
+                try {
+                    const cartItemIds = cartItems.map(item => item.id);
+                    const result = await getProductRecommendations({ cartItems: cartItemIds, viewingHistory: [] });
+                    setRecommendations(result);
+                } catch (e) {
+                    setError("Sorry, we couldn't fetch recommendations at this time.");
+                    console.error(e);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchRecommendations();
+        }
+    }, [cartItems]);
+
+    const recommendedProducts = recommendations ? allProducts.filter(p => recommendations.recommendations.includes(p.id)) : [];
+
+    if (cartItems.length === 0) return null;
+
+    return (
+      <div className="mt-24">
+        <h2 className="text-3xl font-headline font-bold text-center mb-12">You Might Also Like</h2>
+        {isLoading && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
+            </div>
+        )}
+        {error && <p className="text-destructive text-center">{error}</p>}
+        {!isLoading && recommendedProducts.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {recommendedProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+};
+
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState(initialCartItems);
@@ -134,6 +187,9 @@ export default function CartPage() {
             <CartSummary subtotal={subtotal} />
         </div>
       </div>
+      
+      <RecommendedProducts cartItems={cartItems} />
+
       <div className="mt-12">
         <Button variant="link" asChild>
             <Link href="/shop"><ArrowLeft className="mr-2 h-4 w-4" /> Continue Shopping</Link>
@@ -142,3 +198,4 @@ export default function CartPage() {
     </div>
   );
 }
+
