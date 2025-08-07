@@ -108,7 +108,7 @@ export default function Header() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                            <Link href="/account"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
+                            <Link href="/myaccount"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout} className="text-red-500">
@@ -118,7 +118,7 @@ export default function Header() {
                  </DropdownMenu>
             ) : (
                 <Button variant="ghost" size="icon" asChild>
-                   <Link href="/account">
+                   <Link href="/myaccount">
                     <User className="w-6 h-6" />
                     <span className="sr-only">Account</span>
                   </Link>

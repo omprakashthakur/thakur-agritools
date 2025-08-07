@@ -92,7 +92,7 @@ export default function CheckoutPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-headline font-bold">Checkout</h1>
         <p className="text-lg text-muted-foreground mt-2">
-            Have an account? <Link href="/account" className="text-primary hover:underline">Log in</Link> for a faster experience.
+            Have an account? <Link href="/myaccount" className="text-primary hover:underline">Log in</Link> for a faster experience.
         </p>
       </div>
 

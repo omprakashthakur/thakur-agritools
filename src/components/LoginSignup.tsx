@@ -70,7 +70,7 @@ export default function LoginSignup() {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({ title: "Login Successful", description: "Welcome back!" });
-      router.push('/account');
+      router.push('/myaccount');
     } catch (e: any) {
       toast({ variant: 'destructive', title: "Login Failed", description: e.message });
     } finally {
@@ -86,7 +86,7 @@ export default function LoginSignup() {
         displayName: `${values.firstName} ${values.lastName}`
       });
       toast({ title: "Registration Successful", description: "Welcome to Thakur AgriTools Hub!" });
-      router.push('/account');
+      router.push('/myaccount');
     } catch (e: any) {
       toast({ variant: 'destructive', title: "Registration Failed", description: e.message });
     } finally {
@@ -100,7 +100,7 @@ export default function LoginSignup() {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
       toast({ title: "Login Successful", description: "Welcome!" });
-      router.push('/account');
+      router.push('/myaccount');
     } catch (e: any) {
       toast({ variant: 'destructive', title: "Google Sign-In Failed", description: e.message });
     } finally {
