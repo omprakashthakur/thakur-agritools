@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useParams, notFound, useRouter } from 'next/navigation';
@@ -105,7 +104,7 @@ export default function OrderDetailsPage() {
                         <p className="text-muted-foreground">{order.billingAddress}</p>
                     </CardContent>
                 </Card>
-            </Card>
+            </div>
 
             <Card>
                 <CardHeader>
@@ -134,4 +133,3 @@ export default function OrderDetailsPage() {
         </div>
     );
 }
-
