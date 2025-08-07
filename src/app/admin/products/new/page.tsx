@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowLeft, Upload } from 'lucide-react';
 import Image from 'next/image';
 
@@ -11,9 +13,47 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { categories } from '@/lib/data';
+import { categories, allProducts } from '@/lib/data';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AdminAddProductPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [name, setName] = useState('Pro Power Drill');
+  const [description, setDescription] = useState('A powerful and durable drill for heavy-duty tasks. Comes with a brushless motor for longer life and better performance.');
+  const [price, setPrice] = useState('129.99');
+  const [category, setCategory] = useState('');
+  const [status, setStatus] = useState('published');
+
+  const handleSaveProduct = () => {
+    // This is where you would typically send data to a server.
+    // For now, we'll just add it to our mock data array in memory.
+    const newProduct = {
+      id: (allProducts.length + 1).toString(),
+      name,
+      price: parseFloat(price),
+      image: 'https://placehold.co/600x600.png',
+      images: ['https://placehold.co/600x600.png'],
+      slug: name.toLowerCase().replace(/\s+/g, '-'),
+      category,
+      rating: 0,
+      description,
+      specifications: {},
+      reviews: [],
+    };
+    // Note: This only adds to the in-memory array for the current session.
+    // It won't persist if you refresh the page.
+    allProducts.unshift(newProduct); 
+    
+    toast({
+      title: 'Product Saved',
+      description: `"${name}" has been successfully added.`,
+    });
+
+    router.push('/admin/products');
+  };
+
+
   return (
     <div className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
         <div className="mx-auto grid max-w-[59rem] flex-1 auto-rows-max gap-4">
@@ -22,16 +62,16 @@ export default function AdminAddProductPage() {
                     <Link href="/admin/products"><ArrowLeft className="h-4 w-4" /><span className="sr-only">Back</span></Link>
                 </Button>
                 <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                    Pro Power Drill
+                    Add New Product
                 </h1>
                 <Badge variant="outline" className="ml-auto sm:ml-0">
                     In stock
                 </Badge>
                 <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')}>
                         Discard
                     </Button>
-                    <Button size="sm">Save Product</Button>
+                    <Button size="sm" onClick={handleSaveProduct}>Save Product</Button>
                 </div>
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -51,14 +91,16 @@ export default function AdminAddProductPage() {
                             id="name"
                             type="text"
                             className="w-full"
-                            defaultValue="Pro Power Drill"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             />
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="description">Description</Label>
                             <Textarea
                             id="description"
-                            defaultValue="A powerful and durable drill for heavy-duty tasks. Comes with a brushless motor for longer life and better performance."
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                             className="min-h-32"
                             />
                         </div>
@@ -117,11 +159,11 @@ export default function AdminAddProductPage() {
                         <div className="grid gap-6">
                             <div className="grid gap-3">
                                 <Label htmlFor="price">Price</Label>
-                                <Input id="price" type="number" defaultValue="129.99" />
+                                <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
                             </div>
                              <div className="grid gap-3">
                                 <Label htmlFor="originalPrice">Original Price (Optional)</Label>
-                                <Input id="originalPrice" type="number" defaultValue="159.99" />
+                                <Input id="originalPrice" type="number" placeholder="159.99" />
                             </div>
                         </div>
                     </CardContent>
@@ -136,7 +178,7 @@ export default function AdminAddProductPage() {
                         <div className="grid gap-6">
                         <div className="grid gap-3">
                             <Label htmlFor="category">Category</Label>
-                            <Select>
+                            <Select value={category} onValueChange={setCategory}>
                             <SelectTrigger id="category" aria-label="Select category">
                                 <SelectValue placeholder="Select category" />
                             </SelectTrigger>
@@ -159,7 +201,7 @@ export default function AdminAddProductPage() {
                             <div className="grid gap-6">
                                 <div className="grid gap-3">
                                     <Label htmlFor="status">Status</Label>
-                                    <Select>
+                                    <Select value={status} onValueChange={setStatus}>
                                         <SelectTrigger id="status" aria-label="Select status">
                                             <SelectValue placeholder="Select status" />
                                         </SelectTrigger>
@@ -185,10 +227,10 @@ export default function AdminAddProductPage() {
                 </div>
             </div>
             <div className="flex items-center justify-center gap-2 md:hidden">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')}>
                     Discard
                 </Button>
-                <Button size="sm">Save Product</Button>
+                <Button size="sm" onClick={handleSaveProduct}>Save Product</Button>
             </div>
         </div>
     </div>
