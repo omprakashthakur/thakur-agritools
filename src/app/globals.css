@@ -38,6 +38,27 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Admin theme colors */
+    --admin-background: 222.2 84% 4.9%;
+    --admin-foreground: 210 40% 98%;
+    --admin-card: 222.2 84% 4.9%;
+    --admin-card-foreground: 210 40% 98%;
+    --admin-popover: 222.2 84% 4.9%;
+    --admin-popover-foreground: 210 40% 98%;
+    --admin-primary: 210 40% 98%;
+    --admin-primary-foreground: 222.2 47.4% 11.2%;
+    --admin-secondary: 217.2 32.6% 17.5%;
+    --admin-secondary-foreground: 210 40% 98%;
+    --admin-muted: 217.2 32.6% 17.5%;
+    --admin-muted-foreground: 215 20.2% 65.1%;
+    --admin-accent: 217.2 32.6% 17.5%;
+    --admin-accent-foreground: 210 40% 98%;
+    --admin-destructive: 0 62.8% 30.6%;
+    --admin-destructive-foreground: 210 40% 98%;
+    --admin-border: 217.2 32.6% 17.5%;
+    --admin-input: 217.2 32.6% 17.5%;
+    --admin-ring: 212.7 26.8% 83.9%;
   }
 
   .dark {
@@ -82,5 +103,26 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  .admin-dashboard {
+    --background: var(--admin-background);
+    --foreground: var(--admin-foreground);
+    --card: var(--admin-card);
+    --card-foreground: var(--admin-card-foreground);
+    --popover: var(--admin-popover);
+    --popover-foreground: var(--admin-popover-foreground);
+    --primary: var(--admin-primary);
+    --primary-foreground: var(--admin-primary-foreground);
+    --secondary: var(--admin-secondary);
+    --secondary-foreground: var(--admin-secondary-foreground);
+    --muted: var(--admin-muted);
+    --muted-foreground: var(--admin-muted-foreground);
+    --accent: var(--admin-accent);
+    --accent-foreground: var(--admin-accent-foreground);
+    --destructive: var(--admin-destructive);
+    --destructive-foreground: var(--admin-destructive-foreground);
+    --border: var(--admin-border);
+    --input: var(--admin-input);
+    --ring: var(--admin-ring);
   }
 }
