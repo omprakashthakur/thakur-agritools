@@ -86,7 +86,9 @@ const CartSummary = ({ subtotal }) => {
                 <span>Total</span>
                 <span>${total.toFixed(2)}</span>
             </div>
-            <Button size="lg" className="w-full mt-4">Proceed to Checkout</Button>
+            <Button size="lg" className="w-full mt-4" asChild>
+                <Link href="/checkout">Proceed to Checkout</Link>
+            </Button>
         </div>
     );
 };
@@ -198,4 +200,3 @@ export default function CartPage() {
     </div>
   );
 }
-
