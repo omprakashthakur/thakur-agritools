@@ -1,9 +1,8 @@
 import {genkit} from 'genkit';
 import {googleAI} from '@genkit-ai/googleai';
 
-// Import flows to ensure they are registered.
-import './flows/product-recommendation';
-import './flows/product-review-summarizer';
+// The dev server will discover and register flows automatically.
+// Explicitly importing them here creates a circular dependency.
 
 export const ai = genkit({
   plugins: [googleAI()],
