@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { allProducts } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -83,7 +83,8 @@ const AIReviewSummary = ({ product }) => {
 };
 
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
+export default function ProductPage() {
+  const params = useParams();
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
   const product = allProducts.find((p) => p.slug === params.slug);
