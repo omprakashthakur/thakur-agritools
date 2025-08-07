@@ -1,7 +1,8 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import ShopSidebar from '@/components/ShopSidebar';
 import { Button } from '@/components/ui/button';
@@ -11,10 +12,20 @@ import { allProducts } from '@/lib/data';
 
 
 export default function ShopPage() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search');
+  const category = searchParams.get('category');
+
   const [filters, setFilters] = useState({
     categories: [] as string[],
     priceRange: [0, 250000] as [number, number],
   });
+
+  useEffect(() => {
+    if (category) {
+      setFilters(prev => ({...prev, categories: [category]}))
+    }
+  }, [category]);
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -23,7 +34,8 @@ export default function ShopPage() {
   const filteredProducts = allProducts.filter(product => {
     const inCategory = filters.categories.length === 0 || filters.categories.includes(product.category);
     const inPriceRange = product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1];
-    return inCategory && inPriceRange;
+    const inSearch = !search || product.name.toLowerCase().includes(search.toLowerCase());
+    return inCategory && inPriceRange && inSearch;
   });
 
   return (

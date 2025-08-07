@@ -1,9 +1,14 @@
+
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Search, ShoppingCart, User, Menu, ChevronDown, Tractor } from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const categories = [
   'Power Tools',
@@ -14,6 +19,16 @@ const categories = [
 ];
 
 export default function Header() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter();
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b">
       <div className="container mx-auto px-4">
@@ -44,10 +59,18 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="hidden md:block relative w-48 lg:w-64">
-              <Input type="search" placeholder="Search products..." className="pr-10" />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            </div>
+            <form onSubmit={handleSearchSubmit} className="hidden md:block relative w-48 lg:w-64">
+              <Input 
+                type="search" 
+                placeholder="Search products..." 
+                className="pr-10" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground">
+                <Search />
+              </button>
+            </form>
             <Button variant="ghost" size="icon" asChild>
               <Link href="/cart">
                 <ShoppingCart className="w-6 h-6" />
