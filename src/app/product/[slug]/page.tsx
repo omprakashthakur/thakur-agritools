@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -10,9 +11,11 @@ import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Star, Minus, Plus, ShoppingCart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
+import { useToast } from "@/hooks/use-toast";
 
 export default function ProductPage({ params }: { params: { slug: string } }) {
   const [quantity, setQuantity] = useState(1);
+  const { toast } = useToast();
   const product = allProducts.find((p) => p.slug === params.slug);
   const [activeImage, setActiveImage] = useState(product?.image || 'https://placehold.co/600x600.png');
 
@@ -24,6 +27,13 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+
+  const handleAddToCart = () => {
+    toast({
+        title: "Added to cart!",
+        description: `${quantity} x ${product.name} has been added to your cart.`,
+    });
+  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -86,7 +96,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                     <Plus className="h-4 w-4" />
                 </Button>
             </div>
-            <Button size="lg" className="flex-1">
+            <Button size="lg" className="flex-1" onClick={handleAddToCart}>
                 <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
             </Button>
           </div>

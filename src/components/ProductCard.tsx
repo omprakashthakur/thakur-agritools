@@ -1,10 +1,13 @@
 
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Eye, ShoppingCart, Star } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 
 interface ProductCardProps {
   product: {
@@ -20,6 +23,16 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { toast } = useToast();
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent link navigation
+    toast({
+      title: "Added to cart!",
+      description: `"${product.name}" has been added to your cart.`,
+    });
+  }
+  
   return (
     <Card className="group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col">
       <CardHeader className="p-0 relative">
@@ -37,10 +50,12 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Badge className="absolute top-3 left-3 bg-accent text-accent-foreground">{product.tag}</Badge>
         )}
         <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <Button size="icon" variant="secondary" className="rounded-full h-10 w-10">
-                <Eye className="w-5 h-5" />
-                <span className="sr-only">Quick View</span>
-            </Button>
+            <Link href={`/product/${product.slug}`} tabIndex={-1}>
+              <Button size="icon" variant="secondary" className="rounded-full h-10 w-10">
+                  <Eye className="w-5 h-5" />
+                  <span className="sr-only">Quick View</span>
+              </Button>
+            </Link>
         </div>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
@@ -65,7 +80,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button className="w-full" variant="outline">
+        <Button className="w-full" variant="outline" onClick={handleAddToCart}>
           <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
         </Button>
       </CardFooter>
