@@ -53,17 +53,27 @@ export default function ProductForm({ product }: ProductFormProps) {
     
     setIsLoading(true);
 
+    const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+    let finalImages = images;
+
+    if (!isEditing) {
+        // For new products, generate a dynamic Unsplash URL
+        const unsplashUrl = `https://source.unsplash.com/600x600/?${encodeURIComponent(name.split(' ').slice(0, 2).join(','))}`;
+        finalImages = [unsplashUrl];
+    }
+
+
     const productData = {
         name,
         description,
         price: parseFloat(price),
         originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
         category,
-        images,
-        image: images[0],
+        images: finalImages,
+        image: finalImages[0],
         brand,
         subCategory,
-        slug: name.toLowerCase().replace(/\s+/g, '-'),
+        slug,
         // Default values for new products
         rating: product?.rating || 0,
         specifications: product?.specifications || {},
