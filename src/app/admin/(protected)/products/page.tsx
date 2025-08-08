@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
@@ -10,21 +11,61 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { allProducts as initialProducts } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import { getProducts, deleteProduct, type Product } from '@/services/product.service';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  const handleDeleteProduct = (productId: string) => {
-    setProducts(products.filter(p => p.id !== productId));
-    toast({
-      title: 'Product Deleted',
-      description: 'The product has been successfully removed.',
-    });
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const productsData = await getProducts();
+        setProducts(productsData);
+      } catch (error) {
+        toast({
+          variant: 'destructive',
+          title: 'Failed to fetch products',
+          description: 'There was a problem loading the products from the database.',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [toast]);
+
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      setProducts(products.filter(p => p.id !== productId));
+      toast({
+        title: 'Product Deleted',
+        description: 'The product has been successfully removed.',
+      });
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'Deletion Failed',
+        description: 'Could not delete the product from the database.',
+      });
+    }
   };
+
+  if (isLoading) {
+    return (
+        <Card>
+            <CardHeader><CardTitle>Products</CardTitle></CardHeader>
+            <CardContent>
+                <Skeleton className="h-48 w-full" />
+            </CardContent>
+        </Card>
+    )
+  }
 
   return (
     <Card>

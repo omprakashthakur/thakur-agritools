@@ -1,19 +1,18 @@
 
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import { allProducts } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Star, Minus, Plus, ShoppingCart, Bot, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Star, Minus, Plus, ShoppingCart, Bot, ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { useToast } from "@/hooks/use-toast";
 import { summarizeProductReviews, type SummarizeProductReviewsOutput } from '@/ai/flows/product-review-summarizer';
 import { Skeleton } from '@/components/ui/skeleton';
+import { getProductBySlug, getProducts, type Product } from '@/services/product.service';
 
 const AIReviewSummary = ({ product }) => {
     const [summary, setSummary] = useState<SummarizeProductReviewsOutput | null>(null);
@@ -87,21 +86,66 @@ export default function ProductPage() {
   const params = useParams();
   const [quantity, setQuantity] = useState(1);
   const { toast } = useToast();
-  const product = allProducts.find((p) => p.slug === params.slug);
-  const [activeImage, setActiveImage] = useState(product?.image || 'https://placehold.co/600x600.png');
+  
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [activeImage, setActiveImage] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (product) {
-      setActiveImage(product.image);
-    }
-  }, [product]);
+    const fetchProductData = async () => {
+      if (params.slug) {
+        setIsLoading(true);
+        const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
+        const p = await getProductBySlug(slug);
+        
+        if (p) {
+          setProduct(p);
+          setActiveImage(p.image);
+          
+          // Fetch related products
+          const allProducts = await getProducts();
+          const related = allProducts.filter(rp => rp.category === p.category && rp.id !== p.id).slice(0, 4);
+          setRelatedProducts(related);
 
-  if (!product) {
-    notFound();
+        } else {
+            notFound();
+        }
+        setIsLoading(false);
+      }
+    };
+    fetchProductData();
+  }, [params.slug]);
+
+
+  if (isLoading || !product) {
+     return (
+        <div className="container mx-auto px-4 py-12">
+            <div className="grid md:grid-cols-2 gap-12 items-start">
+                <div className="flex flex-col gap-4">
+                    <Skeleton className="aspect-square w-full rounded-lg" />
+                    <div className="grid grid-cols-5 gap-2">
+                        <Skeleton className="aspect-square w-full rounded-md" />
+                        <Skeleton className="aspect-square w-full rounded-md" />
+                        <Skeleton className="aspect-square w-full rounded-md" />
+                    </div>
+                </div>
+                <div className="space-y-6">
+                    <Skeleton className="h-10 w-3/4" />
+                    <Skeleton className="h-6 w-1/4" />
+                    <Skeleton className="h-8 w-1/3" />
+                    <Skeleton className="h-20 w-full" />
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-12 w-32" />
+                        <Skeleton className="h-12 flex-1" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
   }
   
-  const relatedProducts = allProducts.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
-
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
@@ -118,12 +162,12 @@ export default function ProductPage() {
         {/* Product Image Gallery */}
         <div className="flex flex-col gap-4">
             <div className="aspect-square relative rounded-lg overflow-hidden border">
-                <Image
-                src={activeImage}
-                alt={product.name}
-                fill
-                className="object-cover"
-                />
+                {activeImage && <Image
+                  src={activeImage}
+                  alt={product.name}
+                  fill
+                  className="object-cover"
+                />}
             </div>
             <div className="grid grid-cols-5 gap-2">
                 {(product.images || [product.image]).map((img, idx) => (
@@ -183,7 +227,7 @@ export default function ProductPage() {
               <AccordionTrigger className="text-lg font-headline">Specifications</AccordionTrigger>
               <AccordionContent>
                 <ul className="space-y-2 text-muted-foreground">
-                    {Object.entries(product.specifications).map(([key, value]) => (
+                    {product.specifications && Object.entries(product.specifications).map(([key, value]) => (
                         <li key={key} className="flex justify-between">
                             <span className="font-medium text-foreground">{key}:</span>
                             <span>{value}</span>

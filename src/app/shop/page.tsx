@@ -8,7 +8,8 @@ import ShopSidebar from '@/components/ShopSidebar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Filter } from 'lucide-react';
-import { allProducts } from '@/lib/data';
+import { getProducts, type Product } from '@/services/product.service';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 export default function ShopPage() {
@@ -16,10 +17,28 @@ export default function ShopPage() {
   const search = searchParams.get('search');
   const category = searchParams.get('category');
 
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     categories: [] as string[],
     priceRange: [0, 250000] as [number, number],
   });
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+        setIsLoading(true);
+        try {
+            const products = await getProducts();
+            setAllProducts(products);
+        } catch (error) {
+            console.error("Failed to fetch products", error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     if (category) {
@@ -68,15 +87,23 @@ export default function ShopPage() {
 
         {/* Product Grid */}
         <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-          {filteredProducts.length === 0 && (
-            <div className="text-center py-20">
-                <p className="text-xl text-muted-foreground">No products found matching your criteria.</p>
+          {isLoading ? (
+             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                {Array.from({ length: 9 }).map((_, i) => <Skeleton key={i} className="h-96 w-full" />)}
             </div>
+          ) : (
+            <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {filteredProducts.map(product => (
+                    <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
+                {filteredProducts.length === 0 && (
+                    <div className="text-center py-20">
+                        <p className="text-xl text-muted-foreground">No products found matching your criteria.</p>
+                    </div>
+                )}
+            </>
           )}
         </div>
       </div>

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 
 import { Badge } from '@/components/ui/badge';
@@ -14,21 +14,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { categories, allProducts } from '@/lib/data';
+import { categories } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import { addProduct, updateProduct, type Product } from '@/services/product.service';
 
 interface ProductFormProps {
-    product?: (typeof allProducts)[0];
+    product?: Product;
 }
 
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter();
   const { toast } = useToast();
   const isEditing = !!product;
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Form state
   const [name, setName] = useState(product?.name || '');
   const [description, setDescription] = useState(product?.description || '');
-  const [price, setPrice] = useState(product?.price.toString() || '');
+  const [price, setPrice] = useState(product?.price?.toString() || '');
+  const [originalPrice, setOriginalPrice] = useState(product?.originalPrice?.toString() || '');
   const [category, setCategory] = useState(product?.category || '');
   const [status, setStatus] = useState('published');
   const [images, setImages] = useState(product?.images || ['https://placehold.co/600x600.png']);
@@ -37,7 +41,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [subCategory, setSubCategory] = useState(product?.subCategory || '');
 
 
-  const handleSaveProduct = () => {
+  const handleSaveProduct = async () => {
     if (!name || !price || !category) {
         toast({
             variant: 'destructive',
@@ -46,50 +50,51 @@ export default function ProductForm({ product }: ProductFormProps) {
         });
         return;
     }
+    
+    setIsLoading(true);
 
-    if (isEditing) {
-        const productIndex = allProducts.findIndex(p => p.id === product.id);
-        if (productIndex > -1) {
-            allProducts[productIndex] = {
-                ...allProducts[productIndex],
-                name,
-                description,
-                price: parseFloat(price),
-                category,
-                images,
-                image: images[0],
-                brand,
-                subCategory,
-            };
+    const productData = {
+        name,
+        description,
+        price: parseFloat(price),
+        originalPrice: originalPrice ? parseFloat(originalPrice) : undefined,
+        category,
+        images,
+        image: images[0],
+        brand,
+        subCategory,
+        slug: name.toLowerCase().replace(/\s+/g, '-'),
+        // Default values for new products
+        rating: product?.rating || 0,
+        specifications: product?.specifications || {},
+        reviews: product?.reviews || [],
+    };
+
+    try {
+        if (isEditing && product.id) {
+            await updateProduct(product.id, productData);
+            toast({
+                title: 'Product Updated',
+                description: `"${name}" has been successfully updated.`,
+            });
+        } else {
+            await addProduct(productData);
+            toast({
+                title: 'Product Saved',
+                description: `"${name}" has been successfully added.`,
+            });
         }
-         toast({
-            title: 'Product Updated',
-            description: `"${name}" has been successfully updated.`,
-        });
-    } else {
-        const newProduct = {
-            id: `PROD${(allProducts.length + 1).toString().padStart(3, '0')}`,
-            name,
-            price: parseFloat(price),
-            image: images[0],
-            images,
-            slug: name.toLowerCase().replace(/\s+/g, '-'),
-            category,
-            brand,
-            subCategory,
-            rating: 0,
-            description,
-            specifications: {},
-            reviews: [],
-        };
-        allProducts.unshift(newProduct); 
+        router.push('/admin/products');
+        router.refresh(); // Refresh server components
+    } catch (error) {
         toast({
-            title: 'Product Saved',
-            description: `"${name}" has been successfully added.`,
+            variant: 'destructive',
+            title: 'Save Failed',
+            description: 'There was an error saving the product to the database.',
         });
+    } finally {
+        setIsLoading(false);
     }
-
-    router.push('/admin/products');
   };
 
 
@@ -108,10 +113,13 @@ export default function ProductForm({ product }: ProductFormProps) {
                       In stock
                   </Badge>
                   <div className="hidden items-center gap-2 md:ml-auto md:flex">
-                      <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')}>
+                      <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')} disabled={isLoading}>
                           Discard
                       </Button>
-                      <Button size="sm" onClick={handleSaveProduct}>{isEditing ? 'Save Changes' : 'Save Product'}</Button>
+                      <Button size="sm" onClick={handleSaveProduct} disabled={isLoading}>
+                        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isEditing ? 'Save Changes' : 'Save Product'}
+                      </Button>
                   </div>
               </div>
               <div className="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8">
@@ -133,6 +141,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                               className="w-full"
                               value={name}
                               onChange={(e) => setName(e.target.value)}
+                              disabled={isLoading}
                               />
                           </div>
                           <div className="grid gap-3">
@@ -142,6 +151,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                               value={description}
                               onChange={(e) => setDescription(e.target.value)}
                               className="min-h-32"
+                              disabled={isLoading}
                               />
                           </div>
                           </div>
@@ -164,7 +174,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                                   />
                                   <div className="grid grid-cols-3 gap-2">
                                       {images.map((img, idx) => (
-                                           <button key={idx} onClick={() => setActiveImage(img)} className="relative">
+                                           <button key={idx} onClick={() => setActiveImage(img)} className="relative" disabled={isLoading}>
                                               <Image
                                                   alt="Product image"
                                                   className={`aspect-square w-full rounded-md object-cover ${activeImage === img ? 'ring-2 ring-primary' : ''}`}
@@ -175,7 +185,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                                               />
                                            </button>
                                       ))}
-                                      <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed">
+                                      <button className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed" disabled={isLoading}>
                                           <Upload className="h-4 w-4 text-muted-foreground" />
                                           <span className="sr-only">Upload</span>
                                       </button>
@@ -188,14 +198,14 @@ export default function ProductForm({ product }: ProductFormProps) {
                           <CardTitle>Pricing</CardTitle>
                       </CardHeader>
                       <CardContent>
-                          <div className="grid gap-6">
+                          <div className="grid gap-6 md:grid-cols-2">
                               <div className="grid gap-3">
                                   <Label htmlFor="price">Price</Label>
-                                  <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+                                  <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} disabled={isLoading}/>
                               </div>
                                <div className="grid gap-3">
                                   <Label htmlFor="originalPrice">Original Price (Optional)</Label>
-                                  <Input id="originalPrice" type="number" placeholder="159.99" />
+                                  <Input id="originalPrice" type="number" placeholder="159.99" value={originalPrice} onChange={e => setOriginalPrice(e.target.value)} disabled={isLoading}/>
                               </div>
                           </div>
                       </CardContent>
@@ -210,11 +220,11 @@ export default function ProductForm({ product }: ProductFormProps) {
                           <div className="grid gap-6">
                             <div className="grid gap-3">
                                   <Label htmlFor="brand">Brand</Label>
-                                  <Input id="brand" type="text" placeholder="e.g. STIHL, Honda" value={brand} onChange={(e) => setBrand(e.target.value)} />
+                                  <Input id="brand" type="text" placeholder="e.g. STIHL, Honda" value={brand} onChange={(e) => setBrand(e.target.value)} disabled={isLoading}/>
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="category">Category</Label>
-                                <Select value={category} onValueChange={setCategory}>
+                                <Select value={category} onValueChange={setCategory} disabled={isLoading}>
                                 <SelectTrigger id="category" aria-label="Select category">
                                     <SelectValue placeholder="Select category" />
                                 </SelectTrigger>
@@ -227,7 +237,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                             </div>
                              <div className="grid gap-3">
                                   <Label htmlFor="subCategory">Sub-category / Type</Label>
-                                  <Input id="subCategory" type="text" placeholder="e.g. Chainsaw, Water Pump" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} />
+                                  <Input id="subCategory" type="text" placeholder="e.g. Chainsaw, Water Pump" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} disabled={isLoading}/>
                               </div>
                           </div>
                       </CardContent>
@@ -241,7 +251,7 @@ export default function ProductForm({ product }: ProductFormProps) {
                               <div className="grid gap-6">
                                   <div className="grid gap-3">
                                       <Label htmlFor="status">Status</Label>
-                                      <Select value={status} onValueChange={setStatus}>
+                                      <Select value={status} onValueChange={setStatus} disabled={isLoading}>
                                           <SelectTrigger id="status" aria-label="Select status">
                                               <SelectValue placeholder="Select status" />
                                           </SelectTrigger>
@@ -261,16 +271,19 @@ export default function ProductForm({ product }: ProductFormProps) {
                               <CardDescription>Add tags to your product.</CardDescription>
                           </CardHeader>
                           <CardContent>
-                               <Input placeholder="e.g. Sale, New, Featured" />
+                               <Input placeholder="e.g. Sale, New, Featured" disabled={isLoading} />
                           </CardContent>
                       </Card>
                   </div>
               </div>
               <div className="flex items-center justify-center gap-2 md:hidden">
-                  <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')}>
+                  <Button variant="outline" size="sm" onClick={() => router.push('/admin/products')} disabled={isLoading}>
                       Discard
                   </Button>
-                  <Button size="sm" onClick={handleSaveProduct}>{isEditing ? 'Save Changes' : 'Save Product'}</Button>
+                  <Button size="sm" onClick={handleSaveProduct} disabled={isLoading}>
+                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                     {isEditing ? 'Save Changes' : 'Save Product'}
+                  </Button>
               </div>
           </div>
       </div>
