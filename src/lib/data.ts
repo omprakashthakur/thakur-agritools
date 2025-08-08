@@ -61,6 +61,8 @@ export const allProducts = [
         ],
         slug: 'power-drill', 
         category: 'power-tools', 
+        brand: 'Generic',
+        subCategory: 'Drill',
         rating: 4.5,
         description: 'A powerful and durable drill for heavy-duty tasks. Comes with a brushless motor for longer life and better performance. Ideal for both professional and home use.',
         specifications: {
@@ -85,6 +87,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'shovel', 
         category: 'hand-tools', 
+        brand: 'Generic',
+        subCategory: 'Shovel',
         rating: 5,
         description: 'Ergonomically designed garden shovel with a hardened steel blade and a comfortable D-handle. Perfect for digging, scooping, and moving soil.',
          specifications: {
@@ -103,6 +107,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'electric-tiller', 
         category: 'gardening', 
+        brand: 'Generic',
+        subCategory: 'Tiller',
         rating: 4,
         description: 'This 16-inch electric tiller and cultivator is perfect for preparing your garden for planting. Its powerful motor easily breaks up tough soil.',
          specifications: {
@@ -121,6 +127,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'safety-goggles', 
         category: 'safety-gear', 
+        brand: 'Generic',
+        subCategory: 'Goggles',
         rating: 4.8,
         description: 'Anti-fog, scratch-resistant safety goggles that provide full protection against dust and debris. Comfortable to wear for extended periods.',
          specifications: {
@@ -139,6 +147,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'welder', 
         category: 'power-tools', 
+        brand: 'Generic',
+        subCategory: 'Welder',
         rating: 4.7,
         description: 'A versatile multi-process welder that supports MIG, TIG, and Stick welding. Perfect for professionals who need a reliable and powerful machine.',
         specifications: {
@@ -157,6 +167,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'harvester', 
         category: 'farming-equipment', 
+        brand: 'Generic',
+        subCategory: 'Harvester',
         rating: 5,
         description: 'High-efficiency combine harvester for large-scale farming. Features advanced threshing technology to maximize grain yield and minimize loss.',
         specifications: {
@@ -175,6 +187,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'pruner', 
         category: 'hand-tools', 
+        brand: 'Generic',
+        subCategory: 'Pruner',
         rating: 4.2,
         description: 'Precision bypass pruners for clean cuts on stems and branches up to 3/4 inch in diameter. Made with high-carbon steel blades.',
         specifications: {
@@ -193,6 +207,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'gloves', 
         category: 'safety-gear', 
+        brand: 'Generic',
+        subCategory: 'Gloves',
         rating: 4.9,
         description: 'Durable leather work gloves with reinforced palms for extra protection and grip. Ideal for construction, farming, and general handling.',
         specifications: {
@@ -211,6 +227,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'seed-planter', 
         category: 'farming-equipment', 
+        brand: 'Generic',
+        subCategory: 'Planter',
         rating: 4.6,
         description: 'Walk-behind automatic seed planter for precise and efficient planting of corn, beans, and other vegetables. Adjustable seed spacing and depth.',
         specifications: {
@@ -229,6 +247,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'garden-hose', 
         category: 'gardening', 
+        brand: 'Generic',
+        subCategory: 'Hose',
         rating: 4.1,
         description: '50-foot flexible garden hose that is kink-resistant and lightweight. Comes with a multi-pattern spray nozzle for all your watering needs.',
         specifications: {
@@ -247,6 +267,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'leaf-blower', 
         category: 'power-tools', 
+        brand: 'Generic',
+        subCategory: 'Blower',
         rating: 4.5,
         description: 'Lightweight and powerful cordless leaf blower. Features variable speed control and a high-efficiency brushless motor for longer run time.',
         specifications: {
@@ -265,6 +287,8 @@ export const allProducts = [
         images: ['https://placehold.co/600x600.png'],
         slug: 'wheelbarrow', 
         category: 'gardening', 
+        brand: 'Generic',
+        subCategory: 'Wheelbarrow',
         rating: 4.3,
         description: '6 cubic foot steel wheelbarrow with a heavy-duty frame and a pneumatic tire for easy maneuvering over rough terrain. Perfect for landscaping and construction.',
         specifications: {

@@ -33,6 +33,8 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [status, setStatus] = useState('published');
   const [images, setImages] = useState(product?.images || ['https://placehold.co/600x600.png']);
   const [activeImage, setActiveImage] = useState(images[0]);
+  const [brand, setBrand] = useState(product?.brand || '');
+  const [subCategory, setSubCategory] = useState(product?.subCategory || '');
 
 
   const handleSaveProduct = () => {
@@ -56,6 +58,8 @@ export default function ProductForm({ product }: ProductFormProps) {
                 category,
                 images,
                 image: images[0],
+                brand,
+                subCategory,
             };
         }
          toast({
@@ -71,6 +75,8 @@ export default function ProductForm({ product }: ProductFormProps) {
             images,
             slug: name.toLowerCase().replace(/\s+/g, '-'),
             category,
+            brand,
+            subCategory,
             rating: 0,
             description,
             specifications: {},
@@ -202,19 +208,27 @@ export default function ProductForm({ product }: ProductFormProps) {
                       </CardHeader>
                       <CardContent>
                           <div className="grid gap-6">
-                          <div className="grid gap-3">
-                              <Label htmlFor="category">Category</Label>
-                              <Select value={category} onValueChange={setCategory}>
-                              <SelectTrigger id="category" aria-label="Select category">
-                                  <SelectValue placeholder="Select category" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                  {categories.map(cat => (
-                                      <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
-                                  ))}
-                              </SelectContent>
-                              </Select>
-                          </div>
+                            <div className="grid gap-3">
+                                  <Label htmlFor="brand">Brand</Label>
+                                  <Input id="brand" type="text" placeholder="e.g. STIHL, Honda" value={brand} onChange={(e) => setBrand(e.target.value)} />
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="category">Category</Label>
+                                <Select value={category} onValueChange={setCategory}>
+                                <SelectTrigger id="category" aria-label="Select category">
+                                    <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {categories.map(cat => (
+                                        <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                                </Select>
+                            </div>
+                             <div className="grid gap-3">
+                                  <Label htmlFor="subCategory">Sub-category / Type</Label>
+                                  <Input id="subCategory" type="text" placeholder="e.g. Chainsaw, Water Pump" value={subCategory} onChange={(e) => setSubCategory(e.target.value)} />
+                              </div>
                           </div>
                       </CardContent>
                       </Card>
