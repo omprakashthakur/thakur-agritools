@@ -4,10 +4,11 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Search, Menu, Bell, Sun, Moon, Globe } from 'lucide-react';
+import { Search, Menu, Bell, Globe, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 import AdminSidebar from './AdminSidebar';
+import { logout } from '@/app/admin/login/actions';
 
 export default function AdminHeader() {
   return (
@@ -43,6 +44,12 @@ export default function AdminHeader() {
         <Button variant="ghost" size="icon">
           <Bell className="h-5 w-5" />
         </Button>
+        <form action={logout}>
+            <Button variant="ghost" size="icon" type="submit">
+                <LogOut className="h-5 w-5" />
+                <span className="sr-only">Logout</span>
+            </Button>
+        </form>
         <Avatar className="h-9 w-9">
           <AvatarImage src="https://placehold.co/40x40.png" alt="Albert F." data-ai-hint="man portrait"/>
           <AvatarFallback>AF</AvatarFallback>
