@@ -3,11 +3,13 @@
 
 import ProductForm from '@/components/admin/ProductForm';
 import { allProducts } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
 
-export default function AdminEditProductPage({ params }: { params: { id: string } }) {
-  const product = allProducts.find(p => p.id === params.id);
+export default function AdminEditProductPage() {
+  const params = useParams();
+  const productId = params.id as string;
+  const product = allProducts.find(p => p.id === productId);
   
   if (!product) {
       notFound();
