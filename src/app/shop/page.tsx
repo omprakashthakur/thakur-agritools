@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import ShopSidebar from '@/components/ShopSidebar';
@@ -11,8 +11,7 @@ import { Filter } from 'lucide-react';
 import { getProducts, type Product } from '@/services/product.service';
 import { Skeleton } from '@/components/ui/skeleton';
 
-
-export default function ShopPage() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
   const category = searchParams.get('category');
@@ -108,5 +107,13 @@ export default function ShopPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-8">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
   );
 }
