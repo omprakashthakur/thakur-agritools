@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
@@ -8,7 +9,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 // Dummy data for demonstration
 const featuredProducts = [
-  { id: '1', name: 'Heavy Duty Power Drill', price: 129.99, originalPrice: 159.99, image: 'https://placehold.co/400x400.png', slug: 'power-drill', tag: 'Sale' },
+  { id: '1', name: 'Heavy Duty Power Drill', price: 129.99, originalPrice: 159.99, image: 'https://images.unsplash.com/photo-1598485269553-617a7a57a159?q=80&w=2070&auto=format&fit=crop', slug: 'power-drill', tag: 'Sale' },
   { id: '2', name: 'Professional Garden Shovel', price: 49.99, image: 'https://placehold.co/400x400.png', slug: 'shovel' },
   { id: '3', name: 'Electric Tiller and Cultivator', price: 249.99, image: 'https://placehold.co/400x400.png', slug: 'electric-tiller' },
   { id: '4', name: 'Advanced Protective Goggles', price: 24.99, image: 'https://placehold.co/400x400.png', slug: 'safety-goggles', tag: 'New' },
