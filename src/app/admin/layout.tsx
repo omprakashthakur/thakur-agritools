@@ -12,22 +12,8 @@ export default function AdminLayout({
   const cookieStore = cookies();
   const session = cookieStore.get('admin-session');
   
-  // This is a bit of a workaround to know if we are on the login page
-  // to avoid a redirect loop. A better solution in a real app might involve
-  // middleware or a different layout structure.
-  const isLoginPage = (children as any)?.props?.childProp?.segment === 'login';
-
-  if (!session && !isLoginPage) {
+  if (!session) {
     redirect('/admin/login');
-  }
-  
-  if (session && isLoginPage) {
-     redirect('/admin');
-  }
-
-  // Don't render the main layout for the login page
-  if (isLoginPage) {
-    return <>{children}</>;
   }
 
   return (
