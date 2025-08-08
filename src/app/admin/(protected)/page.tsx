@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 
 
-const StatCard = ({ title, value, change, changeType, icon: Icon }) => (
+const StatCard = ({ title, value, change, changeType, icon: Icon }: { title: string; value: string; change: string; changeType: 'increase' | 'decrease'; icon: React.ElementType }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
@@ -144,4 +144,3 @@ export default function AdminDashboardPage() {
         </div>
     );
 }
-

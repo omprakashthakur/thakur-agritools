@@ -1,4 +1,3 @@
-
 'use client';
 
 import { BarChart, LineChart, PieChart, Bar, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
@@ -29,7 +28,7 @@ const topProducts = [
     { name: 'Pruner', sales: 150 },
 ]
 
-const StatCard = ({ title, value, icon: Icon, change, changeType }) => (
+const StatCard = ({ title, value, icon: Icon, change, changeType }: { title: string; value: string; icon: React.ElementType; change: string; changeType: 'increase' | 'decrease' }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
