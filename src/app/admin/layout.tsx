@@ -1,7 +1,6 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { usePathname } from 'next/navigation';
 import AdminHeader from '@/components/admin/AdminHeader';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
@@ -13,12 +12,13 @@ export default function AdminLayout({
   const cookieStore = cookies();
   const session = cookieStore.get('admin-session');
   
-  if (!session) {
+  const isLoginPage = (children as any)?.props?.childProp?.segment === 'login';
+
+  if (!session && !isLoginPage) {
     redirect('/admin/login');
   }
   
-  // This is a special case for the login page itself, to avoid a redirect loop
-  if (session && typeof children === 'object' && children && 'type' in children && (children.type as any).name === 'AdminLoginPage') {
+  if (session && isLoginPage) {
      redirect('/admin');
   }
 
