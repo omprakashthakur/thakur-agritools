@@ -9,20 +9,25 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '@/components/ui/dialog';
-import { categories as initialCategories } from '@/lib/data';
+import { categories } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState(initialCategories);
+  // Use a state to trigger re-renders when the underlying data changes.
+  const [_, setForceUpdate] = useState({});
   const [editingCategory, setEditingCategory] = useState<{ id: string; label: string } | null>(null);
   const [newCategoryLabel, setNewCategoryLabel] = useState('');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleDeleteCategory = (categoryId: string) => {
-    setCategories(categories.filter(c => c.id !== categoryId));
+    const categoryIndex = categories.findIndex(c => c.id === categoryId);
+    if (categoryIndex > -1) {
+        categories.splice(categoryIndex, 1);
+    }
+    setForceUpdate({}); // Trigger re-render
     toast({
       title: 'Category Deleted',
       description: 'The category has been successfully removed.',
@@ -38,7 +43,11 @@ export default function AdminCategoriesPage() {
         toast({ variant: 'destructive', title: 'Error', description: 'Category label cannot be empty.' });
         return;
     }
-    setCategories(categories.map(c => c.id === editingCategory.id ? editingCategory : c));
+    const categoryIndex = categories.findIndex(c => c.id === editingCategory.id);
+    if (categoryIndex > -1) {
+        categories[categoryIndex] = editingCategory;
+    }
+    setForceUpdate({}); // Trigger re-render
     toast({ title: 'Category Updated', description: 'Changes have been saved.' });
     setEditingCategory(null);
   };
@@ -52,7 +61,8 @@ export default function AdminCategoriesPage() {
       id: newCategoryLabel.toLowerCase().replace(/\s+/g, '-'),
       label: newCategoryLabel,
     };
-    setCategories([...categories, newCategory]);
+    categories.push(newCategory);
+    setForceUpdate({}); // Trigger re-render
     toast({ title: 'Category Added', description: `"${newCategory.label}" has been added.` });
     setNewCategoryLabel('');
     setIsAddDialogOpen(false);
