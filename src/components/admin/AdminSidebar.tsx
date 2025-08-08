@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BarChart, Settings, ShoppingCart, Users, Package, Tractor } from 'lucide-react';
+import { Home, BarChart, Settings, ShoppingCart, Users, Package, Tractor, Shapes } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const menuItems = [
@@ -16,6 +16,11 @@ const menuItems = [
         label: "Products",
         href: "/admin/products",
         icon: Package
+    },
+    {
+        label: "Categories",
+        href: "/admin/categories",
+        icon: Shapes
     },
     {
         label: "Orders",
