@@ -17,15 +17,26 @@ import {
 } from '@/components/ui/card';
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Separator } from '@/components/ui/separator';
 import { allProducts, orders } from '@/lib/data';
+import { useToast } from '@/hooks/use-toast';
 
 
 const getStatusVariant = (status: string) => {
@@ -47,6 +58,7 @@ const getStatusVariant = (status: string) => {
 export default function AdminOrderDetailsPage() {
     const params = useParams();
     const router = useRouter();
+    const { toast } = useToast();
     const orderId = params.id as string;
     
     const order = orders.find(o => o.id === orderId);
@@ -58,6 +70,33 @@ export default function AdminOrderDetailsPage() {
     const getProductDetails = (productId: string) => {
         return allProducts.find(p => p.id === productId);
     }
+
+    const handleExport = () => {
+        toast({
+            title: "Exporting Order...",
+            description: `Order ${orderId} is being exported. (This is a placeholder)`,
+        });
+    }
+
+    const handleEdit = () => {
+         toast({
+            title: "Editing Order...",
+            description: `Opening editor for order ${orderId}. (This is a placeholder)`,
+        });
+    }
+
+    const handleDelete = () => {
+        const orderIndex = orders.findIndex(o => o.id === orderId);
+        if (orderIndex > -1) {
+            orders.splice(orderIndex, 1);
+        }
+        toast({
+            title: "Order Deleted",
+            description: `Order ${orderId} has been successfully deleted.`,
+        });
+        router.push('/admin/orders');
+    }
+
   return (
     <div className="mx-auto grid max-w-6xl flex-1 auto-rows-max gap-4">
         <div className="flex items-center gap-4">
@@ -89,20 +128,37 @@ export default function AdminOrderDetailsPage() {
                             <CardDescription>Date: {order.date}</CardDescription>
                         </div>
                         <div className="ml-auto flex items-center gap-1">
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                <Button size="icon" variant="outline" className="h-8 w-8">
-                                    <MoreVertical className="h-3.5 w-3.5" />
-                                    <span className="sr-only">More</span>
-                                </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Edit</DropdownMenuItem>
-                                <DropdownMenuItem>Export</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Trash</DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                             <AlertDialog>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                    <Button size="icon" variant="outline" className="h-8 w-8">
+                                        <MoreVertical className="h-3.5 w-3.5" />
+                                        <span className="sr-only">More</span>
+                                    </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={handleEdit}>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleExport}>Export</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                     <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem className="text-destructive focus:text-destructive">Trash</DropdownMenuItem>
+                                    </AlertDialogTrigger>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the
+                                        order and remove its data from our servers.
+                                    </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </div>
                     </CardHeader>
                     <CardContent className="p-6 text-sm">
