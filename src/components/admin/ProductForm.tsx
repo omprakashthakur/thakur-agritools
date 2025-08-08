@@ -58,7 +58,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
     if (!isEditing) {
         // For new products, generate a dynamic Unsplash URL
-        const unsplashUrl = `https://source.unsplash.com/600x600/?${encodeURIComponent(name.split(' ').slice(0, 2).join(','))}`;
+        const unsplashUrl = `https://source.unsplash.com/600x600/?${encodeURIComponent(name.split(' ').slice(0, 2).join(' '))}`;
         finalImages = [unsplashUrl];
     }
 
